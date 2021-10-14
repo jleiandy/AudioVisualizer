@@ -40,7 +40,8 @@ const sketch = (p) => {
 
     p.push()
     if (volume >= 0.3) {
-      p.stroke(0, 255, 255)
+      //p.stroke(0, 255, 255)
+      p.stroke(p.random(255), p.random(255), p.random(255))
     }
     for (let t = -1; t <= 1; t += 2) {
       p.beginShape()
@@ -57,12 +58,13 @@ const sketch = (p) => {
 
     p.push()
     if (volume >= 0.3) {
-      p.stroke(127, 0, 255)
+      //p.stroke(127, 0, 255)
+      p.stroke(p.random(255), p.random(255), p.random(255))
     }
 
     for (let t = -1; t <= 1; t += 2) {
       p.beginShape()
-      for (let i = 0; i <= 180; i += 0.5) {
+      for (let i = 0; i <= 180; i += 0.1) {
         let index = p.floor(p.map(i, 0, 180, 0, wave.length - 1))
         let r = p.map(wave[index], -1, 1, 275, 375)
         let x = r * p.sin(i) * t
