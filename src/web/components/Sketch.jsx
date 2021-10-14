@@ -24,6 +24,7 @@ const sketch = (p) => {
   let songScrubber
   let filter
   let reverb
+  let volumeSlider
   let playButton
   let hideButton
   p.preload = () => {
@@ -72,6 +73,11 @@ const sketch = (p) => {
     songScrubber = p.createSlider(0, song.duration(), song.currentTime())
     songScrubber.position((p.width * 3) / 4 - 20, p.height * 0.55 + 80)
     songScrubber.changed(scrubSong)
+
+    volumeSlider = p.createSlider(0, 100, 100)
+    volumeSlider.position((p.width * 3) / 4 - 20, p.height * 0.55 + 100)
+    volumeSlider.style('transform: rotate(90) deg')
+    volumeSlider.changed(changeVolume)
   }
 
   function togglePlay() {
@@ -112,6 +118,38 @@ const sketch = (p) => {
     song.play()
     song.jump(songScrubber.value())
     playButton.html('Pause')
+  }
+
+  function changeVolume() {
+    song.setVolume(p.map(volumeSlider.value(), 0, 100, 0, 1))
+  }
+  function tetrahedron(side) {
+    p.beginShape(p.TRIANGLES)
+    p.vertex(side, side, side)
+    p.vertex(-side, -side, side)
+    p.vertex(side, -side, -side)
+    p.endShape()
+
+    p.beginShape(p.TRIANGLES)
+
+    p.vertex(-side, -side, side)
+    p.vertex(side, -side, -side)
+    p.vertex(-side, side, -side)
+    p.endShape()
+
+    p.beginShape(p.TRIANGLES)
+
+    p.vertex(side, side, side)
+    p.vertex(-side, side, -side)
+    p.vertex(-side, -side, side)
+    p.endShape()
+
+    p.beginShape(p.TRIANGLES)
+
+    p.vertex(side, side, side)
+    p.vertex(side, -side, -side)
+    p.vertex(-side, side, -side)
+    p.endShape()
   }
 
   p.draw = () => {
@@ -205,34 +243,6 @@ const sketch = (p) => {
 
     let triangleSpeed = p.frameCount * 0.6
 
-    function tetrahedron(side) {
-      p.beginShape(p.TRIANGLES)
-      p.vertex(side, side, side)
-      p.vertex(-side, -side, side)
-      p.vertex(side, -side, -side)
-      p.endShape()
-
-      p.beginShape(p.TRIANGLES)
-
-      p.vertex(-side, -side, side)
-      p.vertex(side, -side, -side)
-      p.vertex(-side, side, -side)
-      p.endShape()
-
-      p.beginShape(p.TRIANGLES)
-
-      p.vertex(side, side, side)
-      p.vertex(-side, side, -side)
-      p.vertex(-side, -side, side)
-      p.endShape()
-
-      p.beginShape(p.TRIANGLES)
-
-      p.vertex(side, side, side)
-      p.vertex(side, -side, -side)
-      p.vertex(-side, side, -side)
-      p.endShape()
-    }
     p.push()
     p.rotateX(triangleSpeed)
     p.rotateY(triangleSpeed)
