@@ -17,9 +17,22 @@ const sketch = (p) => {
   let song
   let amp
   let fft
+  let frequencyGate
+  let bandWidth
+  let reverbMix
+  let reverbAmp
+  let songScrubber
+  let filter
+  let reverb
+  let playButton
+  let hideButton
   p.preload = () => {
     song = p.loadSound(song1)
   }
+
+  // p.mousePressed = () => {
+  //   togglePlay()
+  // }
 
   p.setup = () => {
     p.frameRate(80)
@@ -27,6 +40,82 @@ const sketch = (p) => {
     p.angleMode(p.DEGREES)
     amp = new p5.Amplitude()
     fft = new p5.FFT()
+    filter = new p5.BandPass()
+    reverb = new p5.Reverb()
+    song.disconnect()
+    filter.process(song)
+    reverb.process(song, 3, 2)
+    playButton = p.createButton('Play')
+    playButton.mousePressed(togglePlay)
+    playButton.position((p.width * 3) / 4 + 25, p.height / 2)
+    playButton.style('background', 'transparent')
+    playButton.style('color', '#fff')
+    playButton.style('border', 'solid 2px #fff')
+
+    hideButton = p.createButton('Hide')
+    hideButton.mousePressed(hideControls)
+    hideButton.position(p.width * 0.95, p.height * 0.95)
+
+    hideButton.style('background', 'transparent')
+    hideButton.style('color', '#fff')
+    hideButton.style('border', 'solid 2px #fff')
+
+    frequencyGate = p.createSlider(0, 100, 0)
+    frequencyGate.position((p.width * 3) / 4 - 20, p.height * 0.55)
+    frequencyGate.style('background', '#222')
+
+    bandWidth = p.createSlider(0, 100, 0)
+    bandWidth.position((p.width * 3) / 4 - 20, p.height * 0.55 + 20)
+
+    reverbMix = p.createSlider(0, 100, 0)
+    reverbMix.position((p.width * 3) / 4 - 20, p.height * 0.55 + 40)
+
+    reverbAmp = p.createSlider(0, 100, 0)
+    reverbAmp.position((p.width * 3) / 4 - 20, p.height * 0.55 + 60)
+
+    songScrubber = p.createSlider(0, song.duration(), song.currentTime())
+    songScrubber.position((p.width * 3) / 4 - 20, p.height * 0.55 + 80)
+    songScrubber.changed(scrubSong)
+  }
+
+  function togglePlay() {
+    if (song.isPlaying()) {
+      song.pause()
+      p.noLoop()
+      playButton.html('Play')
+      playButton.position((p.width * 3) / 4 + 25, p.height / 2)
+    } else {
+      song.play()
+      p.loop()
+      playButton.html('Pause')
+      playButton.position((p.width * 3) / 4 + 20, p.height / 2)
+    }
+  }
+
+  function hideControls() {
+    if (hideButton.html() === 'Hide') {
+      playButton.hide()
+      frequencyGate.hide()
+      bandWidth.hide()
+      reverbMix.hide()
+      reverbAmp.hide()
+      songScrubber.hide()
+      hideButton.html('Show')
+    } else {
+      playButton.show()
+      frequencyGate.show()
+      bandWidth.show()
+      reverbMix.show()
+      reverbAmp.show()
+      songScrubber.show()
+      hideButton.html('Hide')
+    }
+  }
+
+  function scrubSong() {
+    song.play()
+    song.jump(songScrubber.value())
+    playButton.html('Pause')
   }
 
   p.draw = () => {
@@ -34,20 +123,25 @@ const sketch = (p) => {
     p.noFill()
     p.stroke(255)
     let volume = amp.getLevel()
-
     let spectrum = fft.analyze()
     let wave = fft.waveform()
 
+    let filterFreq = p.map(frequencyGate.value(), 0, 100, 10, 22050)
+    let filterWidth = p.map(bandWidth.value(), 0, 100, 0, 10)
+    filter.freq(filterFreq)
+    filter.res(filterWidth)
+
+    reverb.drywet(p.map(reverbMix.value(), 0, 100, 0, 1))
+    reverb.amp(p.map(reverbAmp.value(), 0, 100, 0, 1))
     p.push()
     if (volume >= 0.3) {
-      //p.stroke(0, 255, 255)
       p.stroke(p.random(255), p.random(255), p.random(255))
     }
     for (let t = -1; t <= 1; t += 2) {
       p.beginShape()
       for (let i = 0; i <= 180; i++) {
         let index = Math.floor(p.map(i, 0, 180, 0, spectrum.length - 500))
-        let r = p.map(spectrum[index], 0, 255, 350, 500)
+        let r = p.map(spectrum[index], 0, 255, 350, 475)
         let x = r * p.sin(i) * t
         let y = r * p.cos(i)
         p.vertex(x, y)
@@ -74,16 +168,6 @@ const sketch = (p) => {
       p.endShape()
     }
     p.pop()
-
-    p.mouseClicked = () => {
-      if (song.isPlaying()) {
-        song.pause()
-        p.noLoop()
-      } else {
-        song.play()
-        p.loop()
-      }
-    }
 
     p.push()
     if (volume >= 0.3) {
@@ -347,8 +431,6 @@ const sketch = (p) => {
     p.rotateY(y)
     p.box(20 + growth12)
     p.pop()
-
-    console.log(spectrum[400])
   }
 }
 
