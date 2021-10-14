@@ -30,10 +30,6 @@ const sketch = (p) => {
     song = p.loadSound(song1)
   }
 
-  // p.mousePressed = () => {
-  //   togglePlay()
-  // }
-
   p.setup = () => {
     p.frameRate(80)
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL)
@@ -81,12 +77,12 @@ const sketch = (p) => {
   function togglePlay() {
     if (song.isPlaying()) {
       song.pause()
-      p.noLoop()
+      //p.noLoop()
       playButton.html('Play')
       playButton.position((p.width * 3) / 4 + 25, p.height / 2)
     } else {
       song.play()
-      p.loop()
+      //p.loop()
       playButton.html('Pause')
       playButton.position((p.width * 3) / 4 + 20, p.height / 2)
     }
@@ -182,11 +178,18 @@ const sketch = (p) => {
     p.box(b1)
     p.pop()
 
-    let c1Speed = p.frameCount * 1
+    let c1Speed = p.frameCount
     p.push()
     let m1 = p.map(volume, 0, 0.5, 75, 200)
     p.rotateX(c1Speed * 1.1)
     p.rotateY(c1Speed)
+    p.rotateZ(c1Speed)
+    p.circle(0, 0, m1)
+    p.pop()
+
+    p.push()
+    p.rotateX(c1Speed)
+    p.rotateY(c1Speed * 1.2)
     p.rotateZ(c1Speed)
     p.circle(0, 0, m1)
     p.pop()
@@ -254,7 +257,6 @@ const sketch = (p) => {
     p.rotateY(y)
     p.rotateZ(triangleSpeed)
     tetrahedron(10)
-    // p.ellipse(x, y, 100, 100)
 
     p.pop()
     p.push()
