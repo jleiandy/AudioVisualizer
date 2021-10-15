@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useLayoutEffect } from 'react'
 import p5 from '../utilities/p5'
 import 'p5/lib/addons/p5.sound.js'
 import styled from '@emotion/styled'
@@ -13,7 +13,7 @@ const Container = styled.div({
   width: '100%',
 })
 
-const sketch = (p) => {
+const sketch = ({ soundFile, p }) => {
   let song
   let amp
   let fft
@@ -27,13 +27,33 @@ const sketch = (p) => {
   let volumeSlider
   let playButton
   let hideButton
+  let debounceTimeout
   p.preload = () => {
-    song = p.loadSound(song1)
+    song = p.loadSound(soundFile ?? song1)
+    // song.onended(() => {
+    //   playButton.html('Play')
+    // })
+  }
+  p.windowResized = () => {
+    if (debounceTimeout) clearTimeout(debounceTimeout)
+
+    debounceTimeout = setTimeout(() => {
+      p.resizeCanvas(p.windowWidth, p.windowHeight)
+      playButton.position((p.windowWidth * 3) / 4 + 25, p.windowHeight / 2)
+      // hideButton.position(p.windowWidth * 0.95, p.windowHeight * 0.95)
+      frequencyGate.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55)
+      bandWidth.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55 + 20)
+      reverbMix.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55 + 40)
+      reverbAmp.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55 + 60)
+      songScrubber.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55 + 80)
+      volumeSlider.position((p.windowWidth * 3) / 4 - 20, p.windowHeight * 0.55 + 100)
+    }, 150)
   }
 
   p.setup = () => {
     p.frameRate(80)
     p.createCanvas(p.windowWidth, p.windowHeight, p.WEBGL)
+
     p.angleMode(p.DEGREES)
     amp = new p5.Amplitude()
     fft = new p5.FFT()
@@ -49,13 +69,14 @@ const sketch = (p) => {
     playButton.style('color', '#fff')
     playButton.style('border', 'solid 2px #fff')
 
-    hideButton = p.createButton('Hide')
-    hideButton.mousePressed(hideControls)
-    hideButton.position(p.width * 0.95, p.height * 0.95)
+    // hideButton = p.createButton('Hide')
+    // hideButton.mousePressed(hideControls)
+    // hideButton.position(p.width * 0.95, p.height * 0.95)
 
-    hideButton.style('background', 'transparent')
-    hideButton.style('color', '#fff')
-    hideButton.style('border', 'solid 2px #fff')
+    // hideButton.style('background', 'transparent')
+    // hideButton.style('color', '#fff')
+    // hideButton.style('border', 'solid 2px #fff')
+    // hideButton.style('z-index', '1')
 
     frequencyGate = p.createSlider(0, 100, 0)
     frequencyGate.position((p.width * 3) / 4 - 20, p.height * 0.55)
@@ -93,32 +114,60 @@ const sketch = (p) => {
       playButton.position((p.width * 3) / 4 + 20, p.height / 2)
     }
   }
-
-  function hideControls() {
-    if (hideButton.html() === 'Hide') {
-      playButton.hide()
-      frequencyGate.hide()
-      bandWidth.hide()
-      reverbMix.hide()
-      reverbAmp.hide()
-      songScrubber.hide()
-      volumeSlider.hide()
-      hideButton.html('Show')
-    } else {
-      playButton.show()
-      frequencyGate.show()
-      bandWidth.show()
-      reverbMix.show()
-      reverbAmp.show()
-      songScrubber.show()
-      volumeSlider.show()
-      hideButton.html('Hide')
+  let hidden = false
+  p.keyPressed = () => {
+    if (p.keyCode === 80) {
+      togglePlay()
+    }
+    if (p.keyCode === 72 || p.keyCode === 32) {
+      if (!hidden) {
+        playButton.hide()
+        frequencyGate.hide()
+        bandWidth.hide()
+        reverbMix.hide()
+        reverbAmp.hide()
+        songScrubber.hide()
+        volumeSlider.hide()
+        hidden = !hidden
+      } else {
+        playButton.show()
+        frequencyGate.show()
+        bandWidth.show()
+        reverbMix.show()
+        reverbAmp.show()
+        songScrubber.show()
+        volumeSlider.show()
+        hidden = !hidden
+      }
     }
   }
+
+  // function hideControls() {
+  //   if (hideButton.html() === 'Hide') {
+  //     playButton.hide()
+  //     frequencyGate.hide()
+  //     bandWidth.hide()
+  //     reverbMix.hide()
+  //     reverbAmp.hide()
+  //     songScrubber.hide()
+  //     volumeSlider.hide()
+  //     hideButton.html('Show')
+  //   } else {
+  //     playButton.show()
+  //     frequencyGate.show()
+  //     bandWidth.show()
+  //     reverbMix.show()
+  //     reverbAmp.show()
+  //     songScrubber.show()
+  //     volumeSlider.show()
+  //     hideButton.html('Hide')
+  //   }
+  // }
 
   function scrubSong() {
     song.play()
     song.jump(songScrubber.value())
+
     playButton.html('Pause')
   }
 
@@ -133,21 +182,18 @@ const sketch = (p) => {
     p.endShape()
 
     p.beginShape(p.TRIANGLES)
-
     p.vertex(-side, -side, side)
     p.vertex(side, -side, -side)
     p.vertex(-side, side, -side)
     p.endShape()
 
     p.beginShape(p.TRIANGLES)
-
     p.vertex(side, side, side)
     p.vertex(-side, side, -side)
     p.vertex(-side, -side, side)
     p.endShape()
 
     p.beginShape(p.TRIANGLES)
-
     p.vertex(side, side, side)
     p.vertex(side, -side, -side)
     p.vertex(-side, side, -side)
@@ -454,19 +500,36 @@ const sketch = (p) => {
 const Sketch = () => {
   const canvasParentEl = useRef()
   const p5Instance = useRef()
+  const [soundFile, setSoundFile] = useState()
 
   useEffect(() => {
     if (p5Instance.current) {
       p5Instance.current.remove()
     }
 
-    p5Instance.current = new p5(sketch, canvasParentEl.current)
+    p5Instance.current = new p5((p) => sketch({ soundFile, p }), canvasParentEl.current)
     return () => {
       p5Instance.current.remove()
     }
-  }, [])
+  }, [soundFile])
 
-  return <Container ref={canvasParentEl} />
+  function handleSongUpload(e) {
+    e.preventDefault()
+    console.log('dropped')
+    setSoundFile(e.dataTransfer.files[0])
+  }
+
+  return (
+    <Container
+      type="file"
+      onDrop={handleSongUpload}
+      onDragOver={(e) => {
+        e.preventDefault()
+        console.log('dragged')
+      }}
+      ref={canvasParentEl}
+    />
+  )
 }
 
 export default Sketch
