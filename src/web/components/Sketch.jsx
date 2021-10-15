@@ -155,6 +155,9 @@ const sketch = (p) => {
   }
 
   p.draw = () => {
+    if (!song.isPlaying()) {
+      playButton.html('Play')
+    }
     p.background('black')
     p.noFill()
     p.stroke(255)
