@@ -102,6 +102,7 @@ const sketch = (p) => {
       reverbMix.hide()
       reverbAmp.hide()
       songScrubber.hide()
+      volumeSlider.hide()
       hideButton.html('Show')
     } else {
       playButton.show()
@@ -110,6 +111,7 @@ const sketch = (p) => {
       reverbMix.show()
       reverbAmp.show()
       songScrubber.show()
+      volumeSlider.show()
       hideButton.html('Hide')
     }
   }
