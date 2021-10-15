@@ -515,7 +515,6 @@ const Sketch = () => {
 
   function handleSongUpload(e) {
     e.preventDefault()
-    console.log('dropped')
     setSoundFile(e.dataTransfer.files[0])
   }
 
@@ -525,7 +524,6 @@ const Sketch = () => {
       onDrop={handleSongUpload}
       onDragOver={(e) => {
         e.preventDefault()
-        console.log('dragged')
       }}
       ref={canvasParentEl}
     />
