@@ -5,7 +5,7 @@
 ## About The Project
 
 <div align="center">
-  <iframe src="https://giphy.com/embed/IuWAxprJmxfMpDII8q" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/IuWAxprJmxfMpDII8q">via GIPHY</a></p>
+  <img src="https://giphy.com/embed/IuWAxprJmxfMpDII8q" alt="Visualizer GIF" >
 </div>
 
 This was a 2 day personal project. My goal was to combine my interest in music and visuals.
