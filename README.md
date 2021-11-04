@@ -2,17 +2,19 @@
 <h1>Audio Visualizer</h1>
 </div>
 
-## About The Project
-
 <div align="center">
 <img src="https://media4.giphy.com/media/IuWAxprJmxfMpDII8q/giphy.gif?cid=790b76110ec668439d0c177a9560f2fdf0a5ff3b28bc2a6a&rid=giphy.gif&ct=g" alt="Home Page Screenshot" >
 </div>
 
-This was a 2 day personal project. My goal was to combine my interest in music and visuals.
 
 ## App Features
 
-### Built With
+* Upload your own sound files by drag and dropping directly onto the canvas.
+* Mixer sliders in order from top to bottom: frequency band pass, band pass width, reverb dry/wet mix, reverb amplitude, song scrubber, and volume control.
+* Press 'p' to start and pause song.
+* Press 'h' or the spacebar to hide/show the mixer controls
+
+## Built With
 
 - [React.js](https://reactjs.org/)
 - [Next.js](https://nextjs.org/)
