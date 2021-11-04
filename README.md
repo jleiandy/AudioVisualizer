@@ -5,7 +5,7 @@
 ## About The Project
 
 <div align="center">
- <iframe src="https://giphy.com/embed/IuWAxprJmxfMpDII8q" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/IuWAxprJmxfMpDII8q">via GIPHY</a></p>
+<img src="https://media4.giphy.com/media/IuWAxprJmxfMpDII8q/giphy.gif?cid=790b76110ec668439d0c177a9560f2fdf0a5ff3b28bc2a6a&rid=giphy.gif&ct=g" alt="Home Page Screenshot" >
 </div>
 
 This was a 2 day personal project. My goal was to combine my interest in music and visuals.
